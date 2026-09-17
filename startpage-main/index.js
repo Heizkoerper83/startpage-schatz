@@ -1,3 +1,9 @@
+/*
+ * Based on Start Page Tab by Tacoz: https://addons.mozilla.org/en-US/firefox/addon/start-page-tab/
+ * License: GPL-3.0-only; see LICENSE in this project.
+ * Modified 2026-09-17: configurable font and expanded 10-period timetable.
+ */
+
 Date.prototype.getWeek = function () {
   var onejan = new Date(this.getFullYear(), 0, 1);
   return Math.ceil(((this - onejan) / 86400000 + onejan.getDay() + 1) / 7);
@@ -95,448 +101,109 @@ function getStorage(item, unset) {
   return localStorage.getItem(item) ?? unset;
 }
 
-function Subject(name, start, finish) {
-  this.name = name;
-  this.start = start;
-  this.finish = finish;
-}
-
 function hourMinuteToNumber(hour, minute, second = 0) {
   return hour * 3600 + minute * 60 + second;
 }
 
-// function to convert second into hour, minute and second array
-function convertSeconds(s) {
-  var h = Math.floor(s / 3600);
-  var m = Math.floor((s % 3600) / 60);
-  var s = s % 60;
-  return [h, m, s];
-}
-
-const timetable = [
-  [], // Sunday
-  [
-    new Subject(
-      "Before School",
-      hourMinuteToNumber(0, 0),
-      hourMinuteToNumber(8, 50)
-    ),
-    new Subject(
-      getStorage("subMonA1", "Period 1"),
-      hourMinuteToNumber(8, 50),
-      hourMinuteToNumber(9, 48)
-    ),
-    new Subject(
-      getStorage("subMonA2", "Period 2"),
-      hourMinuteToNumber(9, 48),
-      hourMinuteToNumber(10, 46)
-    ),
-    new Subject(
-      "Recess",
-      hourMinuteToNumber(10, 46),
-      hourMinuteToNumber(11, 08)
-    ),
-    new Subject(
-      getStorage("subMonA3", "Period 3"),
-      hourMinuteToNumber(11, 08),
-      hourMinuteToNumber(12, 06)
-    ),
-    new Subject(
-      getStorage("subMonA4", "Period 4"),
-      hourMinuteToNumber(12, 06),
-      hourMinuteToNumber(13, 04)
-    ),
-    new Subject(
-      "Lunch",
-      hourMinuteToNumber(13, 04),
-      hourMinuteToNumber(13, 34)
-    ),
-    new Subject(
-      getStorage("subMonA5", "Period 5"),
-      hourMinuteToNumber(13, 34),
-      hourMinuteToNumber(14, 32)
-    ),
-    new Subject(
-      getStorage("subMonA6", "Period 6"),
-      hourMinuteToNumber(14, 32),
-      hourMinuteToNumber(15, 30)
-    ),
-    new Subject("Home", hourMinuteToNumber(15, 30), hourMinuteToNumber(16, 00)),
-  ], // Monday
-  [
-    new Subject(
-      "Before School",
-      hourMinuteToNumber(0, 0),
-      hourMinuteToNumber(8, 50)
-    ),
-    new Subject(
-      getStorage("subTueA1", "Period 1"),
-      hourMinuteToNumber(8, 50),
-      hourMinuteToNumber(9, 48)
-    ),
-    new Subject(
-      getStorage("subTueA2", "Period 2"),
-      hourMinuteToNumber(9, 48),
-      hourMinuteToNumber(10, 46)
-    ),
-    new Subject(
-      "Recess",
-      hourMinuteToNumber(10, 46),
-      hourMinuteToNumber(11, 08)
-    ),
-    new Subject(
-      getStorage("subTueA3", "Period 3"),
-      hourMinuteToNumber(11, 08),
-      hourMinuteToNumber(12, 06)
-    ),
-    new Subject(
-      getStorage("subTueA4", "Period 4"),
-      hourMinuteToNumber(12, 06),
-      hourMinuteToNumber(13, 04)
-    ),
-    new Subject(
-      "Lunch",
-      hourMinuteToNumber(13, 04),
-      hourMinuteToNumber(13, 34)
-    ),
-    new Subject(
-      getStorage("subTueA5", "Period 5"),
-      hourMinuteToNumber(13, 34),
-      hourMinuteToNumber(14, 32)
-    ),
-    new Subject(
-      getStorage("subTueA6", "Period 6"),
-      hourMinuteToNumber(14, 32),
-      hourMinuteToNumber(15, 30)
-    ),
-    new Subject("Home", hourMinuteToNumber(15, 30), hourMinuteToNumber(16, 00)),
-  ], // Tuesday
-  [
-    new Subject(
-      "Before School",
-      hourMinuteToNumber(0, 0),
-      hourMinuteToNumber(8, 50)
-    ),
-    new Subject(
-      getStorage("subWedA1", "Period 1"),
-      hourMinuteToNumber(8, 50),
-      hourMinuteToNumber(9, 48)
-    ),
-    new Subject(
-      getStorage("subWedA2", "Period 2"),
-      hourMinuteToNumber(9, 48),
-      hourMinuteToNumber(10, 46)
-    ),
-    new Subject(
-      "Recess",
-      hourMinuteToNumber(10, 46),
-      hourMinuteToNumber(11, 08)
-    ),
-    new Subject(
-      getStorage("subWedA3", "Period 3"),
-      hourMinuteToNumber(11, 08),
-      hourMinuteToNumber(12, 06)
-    ),
-    new Subject(
-      getStorage("subWedA4", "Period 4"),
-      hourMinuteToNumber(12, 06),
-      hourMinuteToNumber(13, 04)
-    ),
-    new Subject(
-      "Lunch",
-      hourMinuteToNumber(13, 04),
-      hourMinuteToNumber(13, 34)
-    ),
-    new Subject(
-      getStorage("subWedA5", "Period 5"),
-      hourMinuteToNumber(13, 34),
-      hourMinuteToNumber(14, 32)
-    ),
-    new Subject("Home", hourMinuteToNumber(14, 32), hourMinuteToNumber(15, 00)),
-  ], // Wednesday
-  [
-    new Subject(
-      "Before School",
-      hourMinuteToNumber(0, 0),
-      hourMinuteToNumber(8, 50)
-    ),
-    new Subject(
-      getStorage("subThuA1", "Period 1"),
-      hourMinuteToNumber(8, 50),
-      hourMinuteToNumber(9, 48)
-    ),
-    new Subject(
-      getStorage("subThuA2", "Period 2"),
-      hourMinuteToNumber(9, 48),
-      hourMinuteToNumber(10, 46)
-    ),
-    new Subject(
-      "Recess",
-      hourMinuteToNumber(10, 46),
-      hourMinuteToNumber(11, 08)
-    ),
-    new Subject(
-      getStorage("subThuA3", "Period 3"),
-      hourMinuteToNumber(11, 08),
-      hourMinuteToNumber(12, 06)
-    ),
-    new Subject(
-      getStorage("subThuA4", "Period 4"),
-      hourMinuteToNumber(12, 06),
-      hourMinuteToNumber(13, 04)
-    ),
-    new Subject(
-      "Lunch",
-      hourMinuteToNumber(13, 04),
-      hourMinuteToNumber(13, 34)
-    ),
-    new Subject(
-      getStorage("subThuA5", "Period 5"),
-      hourMinuteToNumber(13, 34),
-      hourMinuteToNumber(14, 32)
-    ),
-    new Subject(
-      getStorage("subThuA6", "Period 6"),
-      hourMinuteToNumber(14, 32),
-      hourMinuteToNumber(15, 30)
-    ),
-    new Subject("Home", hourMinuteToNumber(15, 30), hourMinuteToNumber(16, 00)),
-  ], // Thursday
-  [
-    new Subject(
-      "Before School",
-      hourMinuteToNumber(0, 0),
-      hourMinuteToNumber(8, 50)
-    ),
-    new Subject(
-      getStorage("subFriA1", "Period 1"),
-      hourMinuteToNumber(8, 50),
-      hourMinuteToNumber(9, 48)
-    ),
-    new Subject(
-      getStorage("subFriA2", "Period 2"),
-      hourMinuteToNumber(9, 48),
-      hourMinuteToNumber(10, 46)
-    ),
-    new Subject(
-      "Recess",
-      hourMinuteToNumber(10, 46),
-      hourMinuteToNumber(11, 08)
-    ),
-    new Subject(
-      getStorage("subFriA3", "Period 3"),
-      hourMinuteToNumber(11, 08),
-      hourMinuteToNumber(12, 06)
-    ),
-    new Subject(
-      getStorage("subFriA4", "Period 4"),
-      hourMinuteToNumber(12, 06),
-      hourMinuteToNumber(13, 04)
-    ),
-    new Subject(
-      "Lunch",
-      hourMinuteToNumber(13, 04),
-      hourMinuteToNumber(13, 34)
-    ),
-    new Subject(
-      getStorage("subFriA5", "Period 5"),
-      hourMinuteToNumber(13, 34),
-      hourMinuteToNumber(14, 32)
-    ),
-    new Subject("Home", hourMinuteToNumber(14, 32), hourMinuteToNumber(15, 00)),
-  ], // Friday
-  [], // Saturday
+// The period boundaries follow the time slots published by HTL Dornbirn.
+// See https://www.htldornbirn.at/schule/lehrpersonen (consultation hours).
+const schoolPeriods = [
+  ["07:55", "08:45"],
+  ["08:45", "09:35"],
+  ["09:50", "10:40"],
+  ["10:40", "11:30"],
+  ["11:30", "12:20"],
+  ["12:20", "13:10"],
+  ["13:10", "14:00"],
+  ["14:00", "14:50"],
+  ["15:00", "15:50"],
+  ["15:50", "16:40"],
 ];
 
-function updateTimetable() {
-  // hide currentSubjectParent
-  currentSubjectParent.style.display = "none";
-  // remember to add week 1 week 2 bullshit HAHAHAH ANO MORE OF THIS FUCKERY!!!H!JH!JH voila~
-  // if week 2 just add 7 to the day
-  // get current time
-  var currentTime = new Date();
-  var nowStamp = hourMinuteToNumber(
-    currentTime.getHours(),
-    currentTime.getMinutes(),
-    currentTime.getSeconds()
-  );
+const schoolDays = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
-  // get current day
-  var currentDay = currentTime.getDay();
-  // get week of the year
-  const currentWeek = currentTime.getWeek() % 2;
-  if (currentDay == 6) {
-    document.getElementById("nextSubject").innerHTML = "Nothing! 🥳";
-  } else if (currentDay == 0) {
-    var tomorrow = [];
-    var nextDay = currentDay + 1;
-
-    for (let j = 0; j < timetable[nextDay].length; j++) {
-      const name = timetable[nextDay][j].name;
-      tomorrow.push(name);
-    }
-    tomorrow.splice(tomorrow.indexOf("Before School"), 1);
-    tomorrow.splice(tomorrow.indexOf("Recess"), 1);
-    tomorrow.splice(tomorrow.indexOf("Lunch"), 1);
-    tomorrow.splice(tomorrow.indexOf("Home"), 1);
-
-    //  if two exact same subjects are next to each other, remove one and edit one so it says double
-    for (let i = 0; i < tomorrow.length; i++) {
-      if (tomorrow[i] == tomorrow[i + 1]) {
-        tomorrow.splice(i, 1);
-        tomorrow[i] = tomorrow[i] + " (double)";
-      }
-    }
-
-    document.getElementById("currentSubjectParent").style.display = "none";
-    document.getElementById("upNext").innerHTML = "Tomorrow, you have:";
-    document.getElementById("nextSubject").innerHTML =
-      "<ul>" + tomorrow.join("<br>") + "</ul>";
-  } else {
-    var starts = [];
-    var ends = [];
-    for (let j = 0; j < timetable[currentDay].length; j++) {
-      // get start
-      const start = timetable[currentDay][j].start;
-      // append start to times
-      starts.push(start);
-      // get end
-      const end = timetable[currentDay][j].finish;
-      // append end to times
-      ends.push(end);
-    }
-    // console.log(timetable, starts, ends);
-    var closest = starts.reduce(function (prev, curr) {
-      return Math.abs(curr - nowStamp) < Math.abs(prev - nowStamp)
-        ? curr
-        : prev;
-    });
-    if (closest < nowStamp) {
-      closest = ends[ends.indexOf(closest) + 1];
-    }
-    if (ends.indexOf(closest) >= timetable[currentDay].length - 1) {
-      if (currentDay != 5 && currentDay != 12) {
-        var tomorrow = [];
-        var nextDay = currentDay + 1;
-        if (nextDay >= 14) {
-          // do i even need this lmao
-          nextDay = 1;
-        }
-        for (let j = 0; j < timetable[nextDay].length; j++) {
-          const name = timetable[nextDay][j].name;
-          tomorrow.push(name);
-        }
-
-        tomorrow.splice(tomorrow.indexOf("Before School"), 1);
-        tomorrow.splice(tomorrow.indexOf("Recess"), 1);
-        tomorrow.splice(tomorrow.indexOf("Lunch"), 1);
-        tomorrow.splice(tomorrow.indexOf("Home"), 1);
-
-        //  if two exact same subjects are next to each other, remove one and edit one so it says double
-        for (let i = 0; i < tomorrow.length; i++) {
-          if (tomorrow[i] == tomorrow[i + 1]) {
-            tomorrow.splice(i, 1);
-            tomorrow[i] = tomorrow[i] + " (double)";
-          }
-        }
-
-        document.getElementById("currentSubjectParent").style.display = "none";
-        document.getElementById("upNext").innerHTML = "Tomorrow, you have:";
-        document.getElementById("nextSubject").innerHTML =
-          "<ul>" + tomorrow.join("<br>") + "</ul>";
-      } else {
-        document.getElementById("upNext").innerHTML = "Nothing! 🥳";
-      }
-    } else {
-      // set id upNext to Up next:
-      document.getElementById("upNext").innerHTML = "Up next: <br>";
-      // show currentSubjectParent
-      document.getElementById("currentSubjectParent").style.display = "block";
-      // get current Subject
-      const currentSubject =
-        timetable[currentDay][starts.indexOf(closest) - 1].name;
-      // get current Subject start
-      const currentSubjectStart = convertSeconds(
-        timetable[currentDay][starts.indexOf(closest) - 1].start
-      );
-
-      document.getElementById("currentSubject").innerHTML = currentSubject;
-
-      var subjectName = timetable[currentDay][starts.indexOf(closest)].name;
-      var subjectStart = convertSeconds(closest - nowStamp);
-      var subjectStartString = "";
-      if (subjectStart[0] == "0") {
-        subjectStartString = subjectStart[1] + "m " + subjectStart[2] + "s";
-        if (subjectStart[1] == "0") {
-          subjectStartString = subjectStart[2] + "s";
-        }
-
-        // console.log(subjectStart, subjectStartString);
-      } else {
-        subjectStartString =
-          subjectStart[0] +
-          "h " +
-          subjectStart[1] +
-          "m" +
-          " " +
-          subjectStart[2] +
-          "s";
-      }
-      var allSubjects = [];
-      for (let j = 0; j < timetable[currentDay].length; j++) {
-        // get timetable name
-        const name = timetable[currentDay][j].name;
-        // append name to times
-        allSubjects.push(name);
-      }
-
-      // find location of closest in allSubjects
-      var closestIndex = allSubjects.indexOf(subjectName);
-
-      // remove closestIndex and any before from allSubjects
-      // console.log(closestIndex)
-      allSubjects.splice(closestIndex, 1);
-      allSubjects.splice(0, closestIndex);
-
-      //  remove Before School, Recess, Lunch and Home
-      if (allSubjects.indexOf("Before School") != -1) {
-        allSubjects.splice(allSubjects.indexOf("Before School"), 1);
-      }
-      // if (allSubjects.indexOf("Recess") != -1) {
-      //   allSubjects.splice(allSubjects.indexOf("Recess"), 1);
-      // }
-      // if (allSubjects.indexOf("Lunch") != -1) {
-      //   allSubjects.splice(allSubjects.indexOf("Lunch"), 1);
-      // }
-      if (allSubjects.indexOf("Home") != -1) {
-        allSubjects.splice(allSubjects.indexOf("Home"), 1);
-      }
-
-      //  if two exact same subjects are next to each other, remove one and edit one so it says double
-      if (allSubjects.indexOf(subjectName) != -1) {
-        allSubjects.splice(allSubjects.indexOf(subjectName), 1);
-        subjectName = subjectName + " (double)";
-      }
-      for (let i = 0; i < allSubjects.length; i++) {
-        if (allSubjects[i] == allSubjects[i + 1]) {
-          allSubjects.splice(i, 1);
-          allSubjects[i] = allSubjects[i] + " (double)";
-        }
-      }
-
-      // console.log(allSubjects);
-
-      document.getElementById("nextSubject").innerHTML =
-        "<ul><li>" + subjectName + ", " + subjectStartString + "</li></ul>";
-
-      if (allSubjects.length > 0) {
-        document.getElementById("nextSubject").innerHTML +=
-          "After that:" + "<ul>" + allSubjects.join("<br>") + "</ul>";
-      }
-    }
-  }
+function periodSeconds(time) {
+  const parts = time.split(":").map(Number);
+  return hourMinuteToNumber(parts[0], parts[1]);
 }
 
+function lessonsForDay(day) {
+  if (day < 1 || day > 5) return [];
+  const prefix = schoolDays[day - 1];
+  return schoolPeriods.map(function (times, index) {
+    const period = index + 1;
+    return {
+      period: period,
+      name: getStorage("sub" + prefix + "A" + period, "Period " + period).trim(),
+      start: periodSeconds(times[0]),
+      finish: periodSeconds(times[1]),
+    };
+  }).filter(function (lesson) {
+    return lesson.name !== "";
+  });
+}
+
+function nextSchoolDay(day) {
+  return day >= 5 ? 1 : day + 1;
+}
+
+function countdown(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return (hours ? hours + "h " : "") + minutes + "m " + remainingSeconds + "s";
+}
+
+function showLessonList(element, lessons, firstCountdown) {
+  element.replaceChildren();
+  if (lessons.length === 0) {
+    element.textContent = "No subjects entered.";
+    return;
+  }
+  const list = document.createElement("ul");
+  list.className = "upcomingSubjects";
+  lessons.forEach(function (lesson, index) {
+    const item = document.createElement("li");
+    item.textContent = lesson.name + (index === 0 && firstCountdown ? ", " + firstCountdown : "");
+    list.appendChild(item);
+  });
+  element.appendChild(list);
+}
+
+function updateTimetable(now = new Date()) {
+  const day = now.getDay();
+  const current = document.getElementById("currentSubjectParent");
+  const currentName = document.getElementById("currentSubject");
+  const heading = document.getElementById("upNext");
+  const next = document.getElementById("nextSubject");
+  const nowSeconds = hourMinuteToNumber(now.getHours(), now.getMinutes(), now.getSeconds());
+  const today = lessonsForDay(day);
+  const active = today.find(function (lesson) {
+    return lesson.start <= nowSeconds && nowSeconds < lesson.finish;
+  });
+  current.style.display = active ? "block" : "none";
+  currentName.textContent = active ? active.name : "";
+
+  const upcoming = today.filter(function (lesson) {
+    return lesson.start > nowSeconds;
+  });
+  if (upcoming.length > 0) {
+    heading.textContent = "Up next:";
+    showLessonList(next, upcoming, countdown(upcoming[0].start - nowSeconds));
+    return;
+  }
+
+  // The last lesson is still in progress, but no lesson follows today.
+  if (active) {
+    heading.textContent = "No more lessons today.";
+    next.replaceChildren();
+    return;
+  }
+
+  const nextDay = nextSchoolDay(day);
+  heading.textContent = day === 6 || day === 0 || day === 5 ? "Monday, you have:" : "Tomorrow, you have:";
+  showLessonList(next, lessonsForDay(nextDay));
+}
 // if id settingsbtnimg is clicked, openSettingsTab
 $("#settingsbtnimg").click(openSettingsTab);
 
@@ -748,56 +415,47 @@ for (var i = 0; i < elements.length; i++) {
   elements[i].setAttribute("draggable", "false");
 }
 
-for (weekID of ["A"]) {
-  let dayTitle = document.createElement("div");
-  dayTitle.classList.add("evenperfecter");
-  // dayTitle.innerHTML = `Week ${weekID}`;
-  document.getElementById("timetableInputHolder").appendChild(dayTitle);
-  for (day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]) {
-    let dayTitle = document.createElement("div");
-    dayTitle.classList.add("sidebardiv");
-    dayTitle.innerHTML = `${["M", "T", "W", "T", "F"][day]}`;
-    // document.getElementById("timetableInputHolder").appendChild(dayTitle); // removed because it was causing the timetable to be too big
-    let theflexbox = document.createElement("div");
-    theflexbox.classList.add("flexboxlol");
-    theflexbox.innerHTML = `${["Mon", "Tue", "Wed", "Thu", "Fri"][day]}`;
-    for (period of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) {
-      let inputHolder = document.createElement("div");
-      let label = document.createElement("label");
-      let input = document.createElement("input");
-      // label.innerText = `${period}: `;
-      input.value = getStorage(
-        `sub${["Mon", "Tue", "Wed", "Thu", "Fri"][day]}${weekID}${period}`,
-        `Period ${period}`
-      );
-    
-      // if (day == )
-      let val = `sub${
-        ["Mon", "Tue", "Wed", "Thu", "Fri"][day]
-      }${weekID}${period}`;
-      input.addEventListener("keyup", function () {
-        // console.log(val);
-        localStorage.setItem(val, this.value);
-      });
-      inputHolder.appendChild(label);
-      inputHolder.appendChild(input);
-      input.classList.add(
-        "reallytinyimeanabsolutelymicroscopicyouwillneedamagnifyingglasstoseethis",
-        "timetableInput"
-      );
-      theflexbox.appendChild(inputHolder);
-    }
-    theflexbox.classList.add(
-      "reallytinyimeanabsolutelymicroscopicyouwillneedamagnifyingglasstoseethis"
-    );
-    document.getElementById("timetableInputHolder").appendChild(theflexbox);
-  }
-  let br = document.createElement("br");
-  document.getElementById("timetableInputHolder").appendChild(br);
-  br.classList.add(
-    "reallytinyimeanabsolutelymicroscopicyouwillneedamagnifyingglasstoseethis"
-  );
+const timetableGrid = document.createElement("div");
+timetableGrid.className = "timetableTable";
+const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+
+function addTimetableCell(text, className) {
+  const cell = document.createElement("div");
+  cell.className = "timetableCell " + className;
+  cell.textContent = text;
+  timetableGrid.appendChild(cell);
+  return cell;
 }
+
+addTimetableCell("Period / Time", "timetableHeading");
+weekdays.forEach(function (day) {
+  addTimetableCell(day, "timetableHeading");
+});
+
+schoolPeriods.forEach(function (times, index) {
+  const period = index + 1;
+  const periodCell = addTimetableCell("Period " + period, "timetablePeriod");
+  const timeLabel = document.createElement("small");
+  timeLabel.textContent = times[0] + "–" + times[1];
+  periodCell.appendChild(timeLabel);
+
+  schoolDays.forEach(function (day, dayIndex) {
+    const cell = addTimetableCell("", "");
+    const input = document.createElement("input");
+    input.className = "timetableInput";
+    input.type = "text";
+    input.setAttribute("aria-label", weekdays[dayIndex] + ", period " + period);
+    const key = "sub" + day + "A" + period;
+    input.value = getStorage(key, "Period " + period);
+    input.addEventListener("input", function () {
+      localStorage.setItem(key, input.value);
+      updateTimetable();
+    });
+    cell.appendChild(input);
+  });
+});
+
+document.getElementById("timetableInputHolder").appendChild(timetableGrid);
 
 // console.log(localStorage)
 var localStorageImageOpacity = localStorage.getItem("image-opacity");
